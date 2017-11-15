@@ -159,9 +159,10 @@ class AdminController extends Controller
             $omdb = new OMDbAPI('7d17d2ef');
             $result = $omdb->search($data['keyword'], 'SERIES');
 
-            if(!property_exists($result->data,'Error')){
+            if (!property_exists($result->data, 'Error')) {
                 $result = $result->data->Search;
-            }else{
+            } else {
+                //TODO:implement flashErrorMessage
                 $error = $result->data->Error;
             }
         }
@@ -184,7 +185,7 @@ class AdminController extends Controller
 
         $omdb = new OMDbAPI('7d17d2ef');
         $result = $omdb->fetch('i', $id)->data;
-        if($result->Type === 'series'){
+        if ($result->Type === 'series') {
             //Add show informations
             $show = new TVShow;
             $show
@@ -192,7 +193,7 @@ class AdminController extends Controller
                 ->setSynopsis($result->Plot);
 
             $file = $result->Poster;
-            if($file){
+            if ($file) {
                 $webRoot = $this->get('kernel')->getRootDir() . '/../web';
                 $extension = pathinfo($file)['extension'];
                 $filename = $id . '.' . $extension;
@@ -202,13 +203,41 @@ class AdminController extends Controller
             $em->persist($show);
 
             //TODO:Add show's seasons
+            for ($i = 1; $i <= $result->totalSeasons; $i++) {
+                $seasonOmdb = $omdb->fetch('i', $id, ['Season' => $i]);
+                $seasonData = $seasonOmdb->data;
 
-                //TODO:Add each season's episode
+                $season = new Season();
+                $season
+                    ->setShow($show)
+                    ->setNumber($i);
+                $em->persist($season);
+
+                if (!property_exists($seasonData, 'Error'))
+                    //TODO:Add each season's episode
+                    foreach ($seasonData->Episodes as $episodeData) {
+
+                        if(strtotime($episodeData->Released)) {
+                            $date = new \DateTime($episodeData->Released);
+                        } else {
+                            $date = null;
+                        }
+
+                        $episode = new Episode;
+                        $episode
+                            ->setName($episodeData->Title)
+                            ->setSeason($season)
+                            ->setNumber($episodeData->Episode)
+                            ->setDate($date);
+                        $em->persist($episode);
+                    }
+            }
 
             $em->flush();
+            return $this->redirect($this->generateUrl('show', array('id' => $show->getId())));
 
-            return $this->redirect($this->generateUrl('show',array('id' => $show->getId())));
-
+        }else{
+            //TODO:implement flashErrorMessage
         }
         return $this->redirect($this->generateUrl('admin_omdb'));
 

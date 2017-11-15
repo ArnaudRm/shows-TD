@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b164227d4ffa0622b7a2341abe1c401a",
+    "content-hash": "2f0bf9e21da231eb6eb673b4313204a6",
     "packages": [
         {
             "name": "aharen/omdbapi",
-            "version": "v2.0.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aharen/OMDbAPI.git",
@@ -2623,7 +2623,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "aharen/omdbapi": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
