@@ -158,7 +158,7 @@ class AdminController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $omdb = new OMDbAPI('7d17d2ef');
-            $result = $omdb->search($data['keyword']);
+            $result = $omdb->search($data['keyword'],'SERIES');
             $result = $result->data->Search;
         }
 
