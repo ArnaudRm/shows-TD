@@ -24,31 +24,31 @@ class AdminController extends Controller
      */
     public function addShowAction(Request $request)
     {
-    	$show = new TVShow;
-    	$form = $this->createForm(ShowType::class, $show);
-    	$success = false;
+        $show = new TVShow;
+        $form = $this->createForm(ShowType::class, $show);
+        $success = false;
 
-		$form->handleRequest($request);
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		$file = $show->getImage();
-    		if ($file) {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $show->getImage();
+            if ($file) {
                 // Handling file upload
-    			$filename = md5(uniqid()).'.'.$file->guessExtension();
-    			$webRoot = $this->get('kernel')->getRootDir().'/../web';
+                $filename = md5(uniqid()) . '.' . $file->guessExtension();
+                $webRoot = $this->get('kernel')->getRootDir() . '/../web';
 
-    			$file->move($webRoot . '/uploads', $filename);
-    			$show->setImage($filename);
-    		}
+                $file->move($webRoot . '/uploads', $filename);
+                $show->setImage($filename);
+            }
 
-    		$em = $this->get('doctrine')->getManager();
-    		$em->persist($show);
-    		$em->flush();
-    		$success = true;
-    	}
+            $em = $this->get('doctrine')->getManager();
+            $em->persist($show);
+            $em->flush();
+            $success = true;
+        }
 
         return [
-        	'form' => $form->createView(),
-        	'success' => $success
+            'form' => $form->createView(),
+            'success' => $success
         ];
     }
 
@@ -64,8 +64,7 @@ class AdminController extends Controller
             $season = new Season;
             $season
                 ->setShow($show)
-                ->setNumber(count($show->getSeasons())+1)
-                ;
+                ->setNumber(count($show->getSeasons()) + 1);
             $em->persist($season);
             $em->flush();
         }
@@ -120,16 +119,15 @@ class AdminController extends Controller
             $episode = new Episode;
             $episode
                 ->setSeason($season)
-                ->setNumber(count($season->getEpisodes())+1)
-                ;
+                ->setNumber(count($season->getEpisodes()) + 1);
 
             $form = $this->createForm(EpisodeType::class, $episode);
 
             $form->handleRequest($request);
-        	if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->isSubmitted() && $form->isValid()) {
                 $em->persist($episode);
                 $em->flush();
-                return $this->redirect($this->generateUrl('show',[
+                return $this->redirect($this->generateUrl('show', [
                     'id' => $episode->getSeason()->getShow()->getId()
                 ]));
             }
@@ -150,21 +148,69 @@ class AdminController extends Controller
     {
         $form = $this->createFormBuilder()
             ->add('keyword')
-            ->getForm()
-            ;
+            ->getForm();
 
         $result = [];
+        $error = null;
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $omdb = new OMDbAPI('7d17d2ef');
-            $result = $omdb->search($data['keyword'],'SERIES');
-            $result = $result->data->Search;
+            $result = $omdb->search($data['keyword'], 'SERIES');
+
+            if(!property_exists($result->data,'Error')){
+                $result = $result->data->Search;
+            }else{
+                $error = $result->data->Error;
+            }
         }
 
         return [
             'form' => $form->createView(),
-            'result' => $result
+            'result' => $result,
+            'error' => $error,
         ];
+    }
+
+    /**
+     * @Route("/importShow/{id}", name="admin_import_show")
+     */
+    public function importShowFromOmdb($id)
+    {
+
+        $em = $this->get('doctrine')->getManager();
+        $repo = $em->getRepository('AppBundle:TVShow');
+
+        $omdb = new OMDbAPI('7d17d2ef');
+        $result = $omdb->fetch('i', $id)->data;
+        if($result->Type === 'series'){
+            //Add show informations
+            $show = new TVShow;
+            $show
+                ->setName($result->Title)
+                ->setSynopsis($result->Plot);
+
+            $file = $result->Poster;
+            if($file){
+                $webRoot = $this->get('kernel')->getRootDir() . '/../web';
+                $extension = pathinfo($file)['extension'];
+                $filename = $id . '.' . $extension;
+                copy($file, $webRoot . '/uploads/' . $filename);
+                $show->setImage($filename);
+            }
+            $em->persist($show);
+
+            //TODO:Add show's seasons
+
+                //TODO:Add each season's episode
+
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('show',array('id' => $show->getId())));
+
+        }
+        return $this->redirect($this->generateUrl('admin_omdb'));
+
     }
 }

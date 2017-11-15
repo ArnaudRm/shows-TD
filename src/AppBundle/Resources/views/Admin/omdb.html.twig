@@ -6,6 +6,12 @@
     <section>
     	<div class="container">
     		<h3>Import OMDB</h3>
+            {% if error is not null %}
+				<div class="alert alert-warning alert-custom">
+					<i class="glyphicon glyphicon-info-sign"></i>
+					Pas de séries correspondantes!
+				</div>
+            {% endif %}
     		<form method="post" enctype="multipart/form-data">
     			{{ form_widget(form) }}
     			<div class="form-group">
@@ -14,13 +20,15 @@
     		</form>
 
             {% for entry in result %}
-                <a href="#" class="tvshow col-sm-6">
+                <a  href="{{ path('admin_import_show', {id: entry.imdbID}) }}" class="tvshow col-sm-6">
                     {% if entry.Poster != 'N/A' %}
                         <img class="pull-left" src="{{ image(entry.Poster).resize(100, 100).png }}" />
                     {% endif %}
-                    <h4>{{ entry.Title }}</h4>
-                    Importer
-                </a>
+                    <h4>{{ entry.Title }}
+					</h4>
+					<strong>Importer</strong>
+
+				</a>
             {% endfor %}
 
     	</div>
