@@ -4,8 +4,33 @@
 {% block contents %}
     <section>
         <div class="container">
-            <h2>Résultats des recherches</h2>
-            {{ dump(shows) }}
+            <h2>Résultats de recherche pour " {{ keyword }} "</h2>
+            {% if shows is not empty %}
+                {% for show in shows %}
+
+                    {% set elementWhereKeywordFound = keyword|lower in show.name|lower ? show.name|lower : show.synopsis|lower %}
+                    {% set arrayText = elementWhereKeywordFound|split(keyword) %}
+                    <a href="{{ path('show', {id: show.id}) }}" class="tvshow col-sm-6">
+                        <img class="pull-left" src="{{ web_image('uploads/'~show.image).resize(100, 100).png }}"/>
+                        <h4>
+                            {% if elementWhereKeywordFound in show.name|lower %}
+                                {{ arrayText[0] }}<span class="keyword-found">{{ keyword }}</span>{{ arrayText[1] }}
+                            {% else %}
+                                {{ show.name }}
+                            {% endif %}
+                            ({{ show.seasons|length }} saisons)
+                        </h4>
+                        {% if elementWhereKeywordFound in show.synopsis|lower %}
+                            {{ arrayText[0] }}<span
+                                class="keyword-found">{{ keyword }}</span>{{ arrayText|length > 1 ? arrayText[1] }}
+                        {% else %}
+                            {{ show.synopsis }}
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>Aucuns résultats ! </p>
+            {% endif %}
         </div>
     </section>
 {% endblock %}

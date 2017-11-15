@@ -15,3 +15,8 @@ section{
     top: -10px;
     left: -17px;
 }
+
+.keyword-found{
+    font-weight: bolder;
+    background-color:lightgreen;
+}

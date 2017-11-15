@@ -69,6 +69,7 @@ class DefaultController extends Controller
         $keyword = $request->get('search');
         return [
             'shows' => $repo->findShowsByKeyword($keyword),
+            'keyword' => $keyword,
         ];
 
     }
