@@ -4,21 +4,40 @@
 
 {% block contents %}
     <section>
-    	<div class="container">
-    		<h3>Liste des séries</h3>
-            <div class="row">
-    		{% for show in shows %}
-            <a href="{{ path('show', {id: show.id}) }}" class="tvshow col-sm-6">
-                <img class="pull-left" src="{{ web_image('uploads/'~show.image).resize(100, 100).png }}" />
-                <h4>{{ show.name }} ({{ show.seasons|length }} saisons)</h4>
-                {{ show.synopsis }}
-            </a>
-    		{% endfor %}
+        <div class="container">
+            <h3>Liste des séries ({{ pagination.getTotalItemCount }})</h3>
+            <br/>
+            <hr/>
+
+            <div class="sort-filters">
+                <p>Trier par :</p>
+                <p{% if pagination.isSorted('t.name') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Noms', 't.name') }}</p>
+                <p{% if pagination.isSorted('nbSeasons') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Nombre de saisons','nbSeasons') }}</p>
+                <p>{{ app.request.get('direction') == 'desc' ? 'Du + au -' :'Du - au +' }}</p>
             </div>
 
-    		{% if app.user %}
-    			<a href="{{ path('admin_add_show') }}">Ajouter une série</a>
-    		{% endif %}
-    	</div>
+            <div class="alert-info alert-custom" style="padding:20px">
+                <i style="font-size:25px" class="glyphicon glyphicon-info-sign"></i>
+                Cliquer sur un filtre déja sélectionné change l'ordre (Ascendant ou descendant)
+            </div>
+
+            <div class="row">
+                {% for item in pagination %}
+                    {% set show = item[0] %}
+                    <a href="{{ path('show', {id: show.id}) }}" class="tvshow col-sm-6">
+                        <img class="pull-left" src="{{ web_image('uploads/'~show.image).resize(100, 100).png }}"/>
+                        <h4>{{ show.name }} ({{ show.seasons|length }} saisons)</h4>
+                        {{ show.synopsis }}
+                    </a>
+                {% endfor %}
+                <div class="navigation">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+
+            {% if app.user %}
+                <a href="{{ path('admin_add_show') }}">Ajouter une série</a>
+            {% endif %}
+        </div>
     </section>
 {% endblock %}

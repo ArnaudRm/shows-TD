@@ -23,13 +23,23 @@ class DefaultController extends Controller
      * @Route("/shows", name="shows")
      * @Template()
      */
-    public function showsAction()
+    public function showsAction(Request $request)
     {
         $em = $this->get('doctrine')->getManager();
         $repo = $em->getRepository('AppBundle:TVShow');
 
+        $dql = "SELECT t,count(s.number) AS nbSeasons  FROM AppBundle:TVShow t JOIN AppBundle:Season s WHERE s.show = t.id GROUP BY t";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            6/*limit per page*/
+        );
+
         return [
-            'shows' => $repo->findAll()
+            'pagination' => $pagination,
         ];
     }
 
@@ -50,17 +60,17 @@ class DefaultController extends Controller
     public function searchBarAction()
     {
         $form = $this->createFormBuilder()
-            ->add('keyword', SearchType::class,array('label' => false))
+            ->add('keyword', SearchType::class, array('label' => false))
             ->getForm();
 
-        return $this->render('AppBundle:Default:searchBar.html.twig',['form' => $form->createView(), ]);
+        return $this->render('AppBundle:Default:searchBar.html.twig', ['form' => $form->createView(),]);
     }
 
     /**
      * @Route("/search", name="search")
      * @Template()
      */
-    public function searchAction( Request $request)
+    public function searchAction(Request $request)
     {
         $em = $this->get('doctrine')->getManager();
         $repo = $em->getRepository('AppBundle:TVShow');

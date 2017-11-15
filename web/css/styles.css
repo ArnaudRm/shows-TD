@@ -20,3 +20,27 @@ section{
     font-weight: bolder;
     background-color:lightgreen;
 }
+
+.tvshow{
+    margin: 30px 0;
+}
+
+.sort-filters{
+    display: flex;
+    max-width: 600px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sorted{
+    text-decoration: underline;
+}
+
+.alert-custom{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.alert-custom i{
+    margin-right: 20px;
+}
