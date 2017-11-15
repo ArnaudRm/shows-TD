@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f0bf9e21da231eb6eb673b4313204a6",
+    "content-hash": "b164227d4ffa0622b7a2341abe1c401a",
     "packages": [
         {
             "name": "aharen/omdbapi",
-            "version": "dev-master",
+            "version": "v2.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aharen/OMDbAPI.git",
-                "reference": "15fdc0a104641324a20280237722258370f8c0c9"
+                "reference": "7e982afa6645439efff3e87395a7869b8b91bffa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aharen/OMDbAPI/zipball/15fdc0a104641324a20280237722258370f8c0c9",
-                "reference": "15fdc0a104641324a20280237722258370f8c0c9",
+                "url": "https://api.github.com/repos/aharen/OMDbAPI/zipball/7e982afa6645439efff3e87395a7869b8b91bffa",
+                "reference": "7e982afa6645439efff3e87395a7869b8b91bffa",
                 "shasum": ""
             },
             "require": {
@@ -46,7 +46,7 @@
                 "omdb api",
                 "tv shows"
             ],
-            "time": "2016-12-13T11:55:02+00:00"
+            "time": "2017-05-19T02:39:02+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -2623,9 +2623,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "aharen/omdbapi": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

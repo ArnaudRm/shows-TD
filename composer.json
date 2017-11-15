@@ -23,7 +23,7 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
         "gregwar/image-bundle": "*",
-        "aharen/omdbapi": "dev-master",
+        "aharen/omdbapi": "^2.0",
         "knplabs/knp-paginator-bundle": "^2.6"
     },
     "require-dev": {

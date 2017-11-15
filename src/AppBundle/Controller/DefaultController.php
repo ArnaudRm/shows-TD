@@ -1,7 +1,7 @@
 <?php
 
 namespace AppBundle\Controller;
-
+use Symfony\Component\Validator\Constraints\Date;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -42,6 +42,8 @@ class DefaultController extends Controller
             'pagination' => $pagination,
         ];
     }
+
+
 
     /**
      * @Route("/show/{id}", name="show")
@@ -91,7 +93,11 @@ class DefaultController extends Controller
      */
     public function calendarAction()
     {
-        return [];
+        $em = $this->get('doctrine')->getManager();
+        $repo = $em->getRepository('AppBundle:Episode');
+        return [
+            'episodes' => $repo->getNextEpisodes()
+        ];
     }
 
     /**

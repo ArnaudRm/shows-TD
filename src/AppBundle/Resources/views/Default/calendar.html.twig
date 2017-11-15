@@ -4,8 +4,17 @@
 
 {% block contents %}
     <section>
-    	<div class="container">
-    		
-    	</div>
+        <div class="container">
+            <h2>Calendrier des prochaines diffusions</h2>
+            {% for ep in episodes %}
+                {% set show = ep.season.show %}
+                <div class="tvshow col-sm-6">
+                    <img class="pull-left" src="{{ web_image('uploads/'~show.image).resize(100, 100).png }}"/>
+                    <h3>{{ show.name }} (saison {{ show.seasons|length }})</h3>
+                    <h4>{{ ep.name }} - <span class="air-date">{{ ep.date|date("d/m/y") }}</span> </h4>
+                    {{ show.synopsis }}
+                </div>
+            {% endfor %}
+        </div>
     </section>
 {% endblock %}
