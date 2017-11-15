@@ -2,3 +2,16 @@
     color:lightgrey;
     font-style:italic;
 }
+
+section{
+    padding:150px 0;
+}
+
+.search-submit{
+    opacity: 0;
+    position: absolute;
+    height: 35px;
+    width: 45px;
+    top: -10px;
+    left: -17px;
+}

@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
@@ -43,8 +44,35 @@ class DefaultController extends Controller
 
         return [
             'show' => $repo->find($id)
-        ];        
+        ];
     }
+
+    public function searchBarAction()
+    {
+        $form = $this->createFormBuilder()
+            ->add('keyword', SearchType::class,array('label' => false))
+            ->getForm();
+
+        return $this->render('AppBundle:Default:searchBar.html.twig',['form' => $form->createView(), ]);
+    }
+
+    /**
+     * @Route("/search", name="search")
+     * @Template()
+     */
+    public function searchAction( Request $request)
+    {
+        $em = $this->get('doctrine')->getManager();
+        $repo = $em->getRepository('AppBundle:TVShow');
+
+
+        $keyword = $request->get('search');
+        return [
+            'shows' => $repo->findShowsByKeyword($keyword),
+        ];
+
+    }
+
 
     /**
      * @Route("/calendar", name="calendar")

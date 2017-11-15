@@ -10,4 +10,18 @@ namespace AppBundle\Repository;
  */
 class TVShowRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    public function findShowsByKeyword($keyword){
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery(
+            'SELECT t
+            FROM AppBundle:TVShow t
+            WHERE t.name LIKE :keyword
+            OR t.synopsis LIKE :keyword
+            ');
+
+        $query->setParameter('keyword',"%$keyword%");
+        return $query->getResult();
+    }
 }
